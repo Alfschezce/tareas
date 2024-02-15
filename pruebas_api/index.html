@@ -9,10 +9,16 @@
     
     <script>
 
-        fetch("/api-todo",{
+        fetch("/api-todo/crear",{
 
-            method :"POST"
-        });
+            method :"POST",
+            body :`{"algo" : "valido"}`,
+            headers : {
+
+                "Content-type" : "application/json"
+            }
+
+        })
 
         .then(respuesta=>respuesta.text())
         .then(respuesta=> console.log(respuesta))

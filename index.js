@@ -1,21 +1,43 @@
 require("dotenv").config();
 const  express = require("express");
+const {getTareas,crearTarea}= require("./db");
+const {json}= require("body-parser");
 
 const servidor = express();
 
+servidor.use(json());
 
-servidor.use("/pruebas",express.static(".pruebas_api"));
 
-servidor.get("/api-todo",(peticion,respuesta)=>{
+servidor.use("/pruebas",express.static("./pruebas_api"));
 
-    respuesta.send("metodo GET")
+servidor.get("/api-todo",async (peticion,respuesta)=>{
+
+    try{
+    
+        let tareas = await getTareas();
+
+        respuesta.json(tareas);
+    
+    }catch(error){
+
+        respuesta.status(500);
+        
+        respuesta.json(error);
+    }
 
     
 });
 
-servidor.post("/api-todo",(peticion,respuesta)=>{
+servidor.post("/api-todo/crear",async(peticion,respuesta,siguiente)=>{
+    
+    let {tarea} = peticion.body;
 
-    respuesta.send("metodo POST");
+    if(tarea && tarea.trim() !="" ){
+
+        return respuesta.send("metodo POST");
+    }
+
+    siguiente("..no me enviaste tarea")
 });
 
 servidor.put("/api-todo",(peticion,respuesta)=>{
@@ -33,6 +55,11 @@ servidor.delete("/api-todo",(peticion,respuesta)=>{
 servidor.use((peticion,respuesta)=>{
 
     respuesta.json({error : "not found"})
+});
+//una forma de control es esta//
+servidor.use((error,peticion,respuesta,siguiente)=>{
+
+    respuesta.send("..error")
 });
 
 servidor.listen(process.env.PORT);
