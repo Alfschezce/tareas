@@ -5,7 +5,7 @@ const {json}= require("body-parser");
 
 const servidor = express();
 
-servidor.use(json());
+servidor.use(json());//aqui intercepta las peticiones y crea un objeto llamado body en dicha peticion
 
 
 servidor.use("/pruebas",express.static("./pruebas_api"));
@@ -34,10 +34,19 @@ servidor.post("/api-todo/crear",async(peticion,respuesta,siguiente)=>{
 
     if(tarea && tarea.trim() !="" ){
 
-        return respuesta.send("metodo POST");
+        try{
+
+            let id = await crearTarea({tarea});
+            return respuesta.json({id});
+        
+        }catch(error){
+
+            respuesta.status(500)
+            return respuesta.json(error)
+        }
     }
 
-    siguiente("..no me enviaste tarea")
+    siguiente({ error : "falta el argumento tarea del objeto JSON"})
 });
 
 servidor.put("/api-todo",(peticion,respuesta)=>{
@@ -54,12 +63,16 @@ servidor.delete("/api-todo",(peticion,respuesta)=>{
 
 servidor.use((peticion,respuesta)=>{
 
+    respuesta.status(404);
+
     respuesta.json({error : "not found"})
 });
 //una forma de control es esta//
 servidor.use((error,peticion,respuesta,siguiente)=>{
 
-    respuesta.send("..error")
+    respuesta.status(400)// esto es bad request//
+
+    respuesta.json({error : "peticion no valida"})
 });
 
 servidor.listen(process.env.PORT);

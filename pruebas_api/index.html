@@ -8,11 +8,11 @@
 <body>
     
     <script>
-
+        let tarea = "Aprender react"
         fetch("/api-todo/crear",{
 
             method :"POST",
-            body :`{"algo" : "valido"}`,
+            body :JSON.stringify({tarea}),
             headers : {
 
                 "Content-type" : "application/json"

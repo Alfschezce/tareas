@@ -41,7 +41,7 @@ function crearTarea({tarea}){
 
         try{
 
-            let [{id}] = await conexion `INSERT INTO  tareas (tareas) VALUES (${tarea}) RETURNING id`;
+            let [{id}] = await conexion `INSERT INTO  tareas (tarea) VALUES (${tarea}) RETURNING id`;
             conexion.end()
             
             ok(id);
