@@ -22,7 +22,7 @@ function getTareas(){
             let tareas = await conexion `SELECT * FROM tareas`;
             conexion.end()
             
-            ok(tareas);
+            ok(tareas);//pasa el array de tareas
         
         }catch(error){
             
@@ -40,7 +40,7 @@ function crearTarea({tarea}){
         let conexion = conectar();
 
         try{
-
+            //aqui retorna un array [{id:3}] y lo desestructuro con {me quedo el 3}
             let [{id}] = await conexion `INSERT INTO  tareas (tarea) VALUES (${tarea}) RETURNING id`;
             conexion.end()
             
@@ -77,5 +77,48 @@ function borrarTarea(id){
     });
 }
 
+function actualizarEstado(id){
 
-module.exports = {getTareas,crearTarea,borrarTarea}
+    return new Promise(async(ok,ko)=>{
+
+        let conexion = conectar();
+
+        try{
+
+            let {count} = await conexion `UPDATE tareas SET terminada = NOT terminada WHERE id= ${id}`;
+            conexion.end()
+            
+            ok(count);
+        
+        }catch(error){
+            
+            ko({error:"error en la base de datos"});
+        }
+
+
+    });
+}
+
+function actualizarTexto(id,tarea){
+
+    return new Promise(async(ok,ko)=>{
+
+        let conexion = conectar();
+
+        try{
+
+            let {count} = await conexion `UPDATE tareas SET tarea = ${tarea} WHERE id= ${id}`;
+            conexion.end()
+            
+            ok(count);
+        
+        }catch(error){
+            
+            ko({error:"error en la base de datos"});
+        }
+
+
+    });
+}
+
+module.exports = {getTareas,crearTarea,borrarTarea,actualizarEstado,actualizarTexto}

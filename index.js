@@ -1,11 +1,14 @@
 require("dotenv").config();
 const  express = require("express");
-const {getTareas,crearTarea,borrarTarea}= require("./db");
+const {getTareas,crearTarea,borrarTarea,actualizarEstado,actualizarTexto}= require("./db");
 const {json}= require("body-parser");
+const cors = require("cors");
 
 const servidor = express();
 
-servidor.use(json());//aqui intercepta las peticiones y crea un objeto llamado body en dicha peticion
+servidor.use(cors());
+
+servidor.use(json());// todas las peticiones pasan por aqui y crea un objeto llamado body en la peticion
 
 
 servidor.use("/pruebas",express.static("./pruebas_api"));
@@ -30,7 +33,7 @@ servidor.get("/api-todo",async (peticion,respuesta)=>{
 
 servidor.post("/api-todo/crear",async(peticion,respuesta,siguiente)=>{
     
-    let {tarea} = peticion.body;
+    let {tarea} = peticion.body;//aqui extraigo la tarea de peticion.body
 
     if(tarea && tarea.trim() !="" ){
 
@@ -48,16 +51,53 @@ servidor.post("/api-todo/crear",async(peticion,respuesta,siguiente)=>{
 
     siguiente({ error : "falta el argumento tarea del objeto JSON"})
 });
+//aqui tiene que llevar el id( que sera un numero) y la operacion que queremos hacer 1 que sera editar texto, o 2 que sera toogle de terminada
+servidor.put("/api-todo/actualizar/:id([0-9]+)/:operacion(1|2)",async(peticion,respuesta)=>{
 
-servidor.put("/api-todo",(peticion,respuesta)=>{
+    //si operacion es 1//      
+    if(peticion.params.operacion== 1){
 
-    respuesta.send("metodo PUT");
+        let {tarea} = peticion.body;//extraigo la tarea de peticion.body//
+
+        if(tarea && tarea.trim() !=""){
+
+            try{
+    
+                let cantidad = await actualizarTexto(peticion.params.id,tarea);
+                return respuesta.json({resultado :cantidad  ? "ok" : "ko"});
+            
+            }catch(error){
+    
+                respuesta.status(500)
+                return respuesta.json(error)
+            }
+            
+
+    }
+    siguiente({ error : "falta el argumento tarea del objeto JSON"})
+    //sino es 1 pues sera 2//
+}else{
+        try{
+    
+            let cantidad = await actualizarEstado(peticion.params.id);
+            return respuesta.json({resultado :cantidad  ? "ok" : "ko"});
+        
+        }catch(error){
+
+            respuesta.status(500)
+            return respuesta.json(error)
+        }
+
+
+    }
+    
+            
 });
 
-servidor.delete("/api-todo/borrar/:id",async(peticion,respuesta)=>{
+servidor.delete("/api-todo/borrar/:id([0-9]+)",async(peticion,respuesta)=>{
 
     try{
-        let cantidad = await borrarTarea(peticion.params.id);
+        let cantidad = await borrarTarea(peticion.params.id);//params.id coge el parametro id de lo que hemos escrito en el front, en este caso un 2 por ejempplo//
         return respuesta.json({resultado :cantidad  ? "ok" : "ko"});
 
     }catch(error){
@@ -72,7 +112,7 @@ servidor.delete("/api-todo/borrar/:id",async(peticion,respuesta)=>{
 });
 
 
-
+//cuando nada encaja en las peticiones
 servidor.use((peticion,respuesta)=>{
 
     respuesta.status(404);

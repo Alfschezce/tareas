@@ -8,15 +8,16 @@
 <body>
     
     <script>
-        let tarea = "Aprender react"
-        fetch("/api-todo/borrar/2",{
+        let tarea = "ir a futbol"
+                //en el caso de actualizar sera peticion.params.id.operacion// id sera 9 y operacion 2 que sera cambiar terminada de true a false o viceversa //
+        fetch("/api-todo/actualizar/9/1",{
 
-            method :"DELETE",/*
+            method :"PUT",
             body :JSON.stringify({tarea}),
             headers : {
 
                 "Content-type" : "application/json"
-            }*/
+            }
 
         })
 
