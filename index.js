@@ -10,8 +10,8 @@ servidor.use(cors());// para unir diferentes dominios
 
 servidor.use(json());// todas las peticiones pasan por aqui y crea un objeto llamado body en la peticion
 
-
-servidor.use("/pruebas",express.static("./estaticos"));
+servidor.use(express.static("./estaticos"));
+servidor.use("/pruebas",express.static("./pruebas_api"));
 //peticion para servir//
 servidor.get("/api-todo",async (peticion,respuesta)=>{
 
