@@ -6,13 +6,13 @@ const cors = require("cors");
 
 const servidor = express();
 
-servidor.use(cors());
+servidor.use(cors());// para unir diferentes dominios
 
 servidor.use(json());// todas las peticiones pasan por aqui y crea un objeto llamado body en la peticion
 
 
-servidor.use("/pruebas",express.static("./pruebas_api"));
-
+servidor.use("/pruebas",express.static("./estaticos"));
+//peticion para servir//
 servidor.get("/api-todo",async (peticion,respuesta)=>{
 
     try{
@@ -30,7 +30,7 @@ servidor.get("/api-todo",async (peticion,respuesta)=>{
 
     
 });
-
+//peticion para crear//
 servidor.post("/api-todo/crear",async(peticion,respuesta,siguiente)=>{
     
     let {tarea} = peticion.body;//aqui extraigo la tarea de peticion.body
@@ -51,10 +51,11 @@ servidor.post("/api-todo/crear",async(peticion,respuesta,siguiente)=>{
 
     siguiente({ error : "falta el argumento tarea del objeto JSON"})
 });
+//peticion para actualizar
 //aqui tiene que llevar el id( que sera un numero) y la operacion que queremos hacer 1 que sera editar texto, o 2 que sera toogle de terminada
 servidor.put("/api-todo/actualizar/:id([0-9]+)/:operacion(1|2)",async(peticion,respuesta)=>{
 
-    //si operacion es 1//      
+    //si operacion es 1 lo que queremos es actualizar el texto//      
     if(peticion.params.operacion== 1){
 
         let {tarea} = peticion.body;//extraigo la tarea de peticion.body//
@@ -75,7 +76,7 @@ servidor.put("/api-todo/actualizar/:id([0-9]+)/:operacion(1|2)",async(peticion,r
 
     }
     siguiente({ error : "falta el argumento tarea del objeto JSON"})
-    //sino es 1 pues sera 2//
+    //sino es 1 pues sera 2 que lo que queremos es actualizar estado de terminada a no terminada//
 }else{
         try{
     
@@ -93,12 +94,12 @@ servidor.put("/api-todo/actualizar/:id([0-9]+)/:operacion(1|2)",async(peticion,r
     
             
 });
-
+//peticion para borrar//
 servidor.delete("/api-todo/borrar/:id([0-9]+)",async(peticion,respuesta)=>{
 
     try{
         let cantidad = await borrarTarea(peticion.params.id);//params.id coge el parametro id de lo que hemos escrito en el front, en este caso un 2 por ejempplo//
-        return respuesta.json({resultado :cantidad  ? "ok" : "ko"});
+        return respuesta.json({resultado :cantidad  ? "ok" : "ko"});//devuelve un objeto que tiene que ser 0 o 1, si es 0 no lo ha borrado si es 1 si
 
     }catch(error){
 
@@ -119,7 +120,7 @@ servidor.use((peticion,respuesta)=>{
 
     respuesta.json({error : "not found"})
 });
-//una forma de control es esta//
+//si las cosas  no vienen bien en la peticion, o no es formato json etc//
 servidor.use((error,peticion,respuesta,siguiente)=>{
 
     respuesta.status(400)// esto es bad request//

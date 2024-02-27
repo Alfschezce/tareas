@@ -8,8 +8,9 @@
 <body>
     
     <script>
+        //la tarea es decir lo que escribimos en el formulario//
         let tarea = "ir a futbol"
-                //en el caso de actualizar sera peticion.params.id.operacion// id sera 9 y operacion 2 que sera cambiar terminada de true a false o viceversa //
+             //ESTA ES LA PETICION   //en el caso de actualizar sera peticion.params.id.operacion// id sera 9 y operacion 2 que sera cambiar terminada de true a false o viceversa //
         fetch("/api-todo/actualizar/9/1",{
 
             method :"PUT",
@@ -20,7 +21,7 @@
             }
 
         })
-
+        //Y ESTA ES LA RESPUESTA DE LA PETICION//
         .then(respuesta=>respuesta.text())
         .then(respuesta=> console.log(respuesta))
 

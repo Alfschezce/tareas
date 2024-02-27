@@ -1,6 +1,6 @@
 require ("dotenv").config();
 const postgres = require("postgres");
-
+//funcion para conectarse al servidor//
 function conectar(){
 
     return postgres({
@@ -11,6 +11,7 @@ function conectar(){
 
     })
 }
+//funcion para que me de la base de datos las  tareas//
 function getTareas(){
 
     return new Promise(async(ok,ko)=>{
@@ -22,7 +23,7 @@ function getTareas(){
             let tareas = await conexion `SELECT * FROM tareas`;
             conexion.end()
             
-            ok(tareas);//pasa el array de tareas
+            ok(tareas);//devuelve la promesa pasando al index.js el array de tareas
         
         }catch(error){
             
@@ -32,7 +33,7 @@ function getTareas(){
 
     });
 }
-
+//funcion para crear una tarea en la base de datos//
 function crearTarea({tarea}){
 
     return new Promise(async(ok,ko)=>{
@@ -44,7 +45,7 @@ function crearTarea({tarea}){
             let [{id}] = await conexion `INSERT INTO  tareas (tarea) VALUES (${tarea}) RETURNING id`;
             conexion.end()
             
-            ok(id);
+            ok(id);//se devuelve la promesa al index.js el id
         
         }catch(error){
             
@@ -54,7 +55,7 @@ function crearTarea({tarea}){
 
     });
 }
-
+//funcion para borrar una tarea en la base de datos//
 function borrarTarea(id){
 
     return new Promise(async(ok,ko)=>{
@@ -66,7 +67,7 @@ function borrarTarea(id){
             let {count} = await conexion `DELETE  FROM tareas WHERE id= ${id}`;
             conexion.end()
             
-            ok(count);
+            ok(count);//sera 0 si no lo ha borrado o 1 si lo ha borrado
         
         }catch(error){
             
@@ -76,7 +77,7 @@ function borrarTarea(id){
 
     });
 }
-
+//funcion para actualizar el estado de la tarea terminada o no terminada//
 function actualizarEstado(id){
 
     return new Promise(async(ok,ko)=>{
@@ -98,7 +99,7 @@ function actualizarEstado(id){
 
     });
 }
-
+//funcion para actualizar el texto cuando lo cambiamos en la tarea//
 function actualizarTexto(id,tarea){
 
     return new Promise(async(ok,ko)=>{
@@ -120,5 +121,5 @@ function actualizarTexto(id,tarea){
 
     });
 }
-
+//exportamos todo//
 module.exports = {getTareas,crearTarea,borrarTarea,actualizarEstado,actualizarTexto}
