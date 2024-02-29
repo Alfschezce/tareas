@@ -10,8 +10,10 @@ fetch("/api-todo")
 .then(tareas => {
     tareas.forEach(({id,tarea,terminada}) => {
         new Tarea(id,tarea,terminada,contenedorTareas);
+        
     });
 });
+
 
 formulario.addEventListener("submit", evento => {
     evento.preventDefault();
